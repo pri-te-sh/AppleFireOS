@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="docs/logo.svg" width="128" height="128" alt="AppleFireOS logo">
+<img src="docs/logo.png" width="160" height="160" alt="AppleFireOS logo">
 
 # AppleFireOS
 
@@ -15,7 +15,7 @@ and no autoplaying trailers.
 [![Stars](https://img.shields.io/github/stars/pri-te-sh/AppleFireOS?style=for-the-badge&color=FFD60A)](https://github.com/pri-te-sh/AppleFireOS/stargazers)
 
 ![100% native](https://img.shields.io/badge/100%25-native%20Java-30D158?style=flat-square)
-![APK size](https://img.shields.io/badge/APK-~190%20KB-0A84FF?style=flat-square)
+![APK size](https://img.shields.io/badge/APK-~275%20KB-0A84FF?style=flat-square)
 ![60 fps](https://img.shields.io/badge/60%20fps-on%20a%20Fire%20TV%20Stick-5E5CE6?style=flat-square)
 ![No Gradle](https://img.shields.io/badge/build-no%20Gradle%2C%20no%20dependencies-8E8E93?style=flat-square)
 ![No tracking](https://img.shields.io/badge/tracking-none-FF453A?style=flat-square)
