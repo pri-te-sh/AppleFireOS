@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Apple's aerial videos are signed by Apple's own root CA, which Android doesn't trust,
+     so they are fetched over plain HTTP. Everything else stays HTTPS-only. -->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">sylvan.apple.com</domain>
+    </domain-config>
+</network-security-config>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">AppleFireOS</string>
+    <string name="redirect_label">AppleFireOS: Home button</string>
+    <string name="redirect_desc">Opens AppleFireOS when you press the remote\'s Home button, instead of the Amazon home screen.</string>
+</resources>
