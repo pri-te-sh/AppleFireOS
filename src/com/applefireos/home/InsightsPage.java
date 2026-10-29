@@ -1,6 +1,8 @@
 package com.applefireos.home;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.RectF;
@@ -411,8 +413,11 @@ final class InsightsPage extends PageScaffold {
     private Row appRow(String pkg, String name, String value, double share, int color) {
         Row row = new Row(home, Row.Style.LIST).title(name).value(value);
         Apps.App a = installed.get(pkg);
+        // The home screen doesn't list itself, so its own icon comes from its resources.
+        Bitmap own = a == null && pkg.equals(home.getPackageName())
+                ? BitmapFactory.decodeResource(home.getResources(), R.drawable.ic_launcher) : null;
         View art = a != null ? Kit.appArt(home, a, Theme.R_SMALL)
-                : Kit.appArt(home, null, null, Theme.GRAPHITE, name, Theme.R_SMALL);
+                : Kit.appArt(home, null, own, Theme.GRAPHITE, name, Theme.R_SMALL);
         row.leading(art, ART_W, ART_H, false);
         row.textColumn().addView(Kit.meter(home, share, color, 6), below(-1, 6, Theme.S1));
         return row;

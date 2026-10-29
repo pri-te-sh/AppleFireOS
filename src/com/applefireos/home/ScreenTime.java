@@ -32,7 +32,7 @@ final class ScreenTime {
 
     static {
         String[] pairs = {
-                "system", "Android System", "com.applefireos.home", "Home (this app)", "com.amazon.tv.launcher", "Amazon Home",
+                "system", "Android System", "com.applefireos.home", "AppleFireOS (this app)", "com.amazon.tv.launcher", "Amazon Home",
                 "com.amazon.webview.chromium", "Web Engine", "com.android.systemui", "System UI", "com.amazon.vizzini", "Alexa",
                 "com.amazon.tcomm", "Amazon Services", "com.amazon.imp", "Amazon Device Services",
                 "fireos.hardware.audio.service", "Audio", "com.android.providers.media.module", "Media Storage",

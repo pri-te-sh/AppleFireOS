@@ -136,7 +136,7 @@ final class SetupPage extends PageScaffold {
             left.addView(Kit.paragraph(home, Theme.Type.BODY, Theme.LABEL, (i + 1) + ".  " + steps[i]), sp);
             if (i == 1) {
                 TextView cmd = Kit.text(home, Theme.Type.HEADLINE, Theme.LABEL,
-                        "./setup.sh " + (ip == null ? "<your TV's IP address>" : ip));
+                        "bash setup.sh " + (ip == null ? "<your TV's IP address>" : ip));
                 cmd.setBackground(Kit.well());
                 cmd.setPadding(Theme.S3, Theme.S2, Theme.S3, Theme.S2);
                 LinearLayout.LayoutParams cp = new LinearLayout.LayoutParams(-2, -2);

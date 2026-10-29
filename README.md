@@ -26,7 +26,7 @@ and no autoplaying trailers.
 
 <br><br>
 
-<img src="docs/banner.png" width="560" alt="AppleFireOS">
+<img src="docs/hero.jpg" width="820" alt="The AppleFireOS home screen: Coco fills the Top Shelf above a row of apps">
 
 </div>
 
@@ -105,6 +105,29 @@ memory and runs at **60 fps** on a Fire TV Stick 4K Max.
 </td>
 </tr>
 </table>
+
+## 📸 Screenshots
+
+<table>
+<tr>
+<td><img src="docs/screenshots/home.jpg" alt="Home screen with the Top Shelf"></td>
+<td><img src="docs/screenshots/control-center.jpg" alt="Control Center"></td>
+</tr>
+<tr>
+<td align="center"><b>Home</b>: the Top Shelf and your apps</td>
+<td align="center"><b>Control Center</b>: power, sleep timer, Bluetooth, VPN</td>
+</tr>
+<tr>
+<td><img src="docs/screenshots/insights.jpg" alt="TV Insights: memory use"></td>
+<td><img src="docs/screenshots/settings.jpg" alt="Settings"></td>
+</tr>
+<tr>
+<td align="center"><b>TV Insights</b>: what's using memory, one press to free it</td>
+<td align="center"><b>Settings</b></td>
+</tr>
+</table>
+
+<sub>Screenshots from a Fire TV Stick 4K Max. Artwork and titles come from TMDB.</sub>
 
 ## 🚀 Install in 3 minutes
 
