@@ -23,6 +23,9 @@ and no autoplaying trailers.
 <a href="https://github.com/pri-te-sh/AppleFireOS/releases/latest/download/AppleFireOS.apk">
   <img src="https://img.shields.io/badge/%E2%AC%87%20Download%20AppleFireOS.apk-FF375F?style=for-the-badge&logoColor=white" height="44" alt="Download AppleFireOS.apk">
 </a>
+<a href="https://pri-te-sh.github.io/AppleFireOS/">
+  <img src="https://img.shields.io/badge/%F0%9F%8C%90%20Website-pri--te--sh.github.io%2FAppleFireOS-7D4CF0?style=for-the-badge" height="44" alt="Website">
+</a>
 
 <br><br>
 
