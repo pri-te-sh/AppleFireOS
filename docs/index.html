@@ -1,0 +1,509 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AppleFireOS: a tvOS-style home screen for Fire TV</title>
+<meta name="description" content="AppleFireOS replaces the Amazon Fire TV home screen with a tvOS-style one: a Top Shelf, Control Center, TV Insights and spring animations. Free, open source, 100% native, no ads.">
+<meta name="theme-color" content="#06060A">
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="apple-touch-icon" href="logo.png">
+<link rel="canonical" href="https://pri-te-sh.github.io/AppleFireOS/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="AppleFireOS: a tvOS-style home screen for Fire TV">
+<meta property="og:description" content="A Top Shelf, Control Center, glass panels and spring animations, with no ads and no sponsored rows. Free and open source.">
+<meta property="og:url" content="https://pri-te-sh.github.io/AppleFireOS/">
+<meta property="og:image" content="https://pri-te-sh.github.io/AppleFireOS/hero.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+:root{
+  --bg:#06060A; --bg-2:#0D0D13; --card:rgba(255,255,255,.045); --card-edge:rgba(255,255,255,.09);
+  --label:#fff; --label-2:rgba(255,255,255,.72); --label-3:rgba(255,255,255,.5);
+  --orange:#FF9F0A; --pink:#FF375F; --violet:#7D4CF0; --blue:#0A84FF; --green:#30D158;
+  --grad:linear-gradient(120deg,#FFB340 0%,#FF375F 48%,#9B6BFF 100%);
+  --r-l:28px; --r-m:18px; --r-s:12px;
+  --max:1160px;
+  font-synthesis:none;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--label);
+  font:17px/1.55 -apple-system,BlinkMacSystemFont,"SF Pro Text","Inter","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+img{max-width:100%;display:block}
+code,pre{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+@media (max-width:600px){.wrap{padding:0 16px}}
+
+/* aurora behind the page */
+.aurora{position:fixed;inset:-20vh -20vw auto;height:120vh;z-index:-1;pointer-events:none;filter:blur(90px);opacity:.55}
+.aurora i{position:absolute;border-radius:50%}
+.aurora i:nth-child(1){width:46vw;height:46vw;left:8vw;top:-6vw;background:#FF7A1A}
+.aurora i:nth-child(2){width:40vw;height:40vw;left:40vw;top:4vw;background:#FF2D6F}
+.aurora i:nth-child(3){width:44vw;height:44vw;left:66vw;top:-10vw;background:#6A3CF0}
+@media (prefers-reduced-motion:no-preference){
+  .aurora i{animation:drift 22s ease-in-out infinite alternate}
+  .aurora i:nth-child(2){animation-duration:28s}
+  .aurora i:nth-child(3){animation-duration:25s}
+}
+@keyframes drift{to{transform:translate(4vw,6vh) scale(1.08)}}
+
+/* nav */
+nav{position:sticky;top:0;z-index:20;backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);
+  background:rgba(6,6,10,.62);border-bottom:1px solid rgba(255,255,255,.06)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none;letter-spacing:-.01em}
+.brand img{width:30px;height:30px;border-radius:8px}
+.brand .name{font-weight:700}
+.brand .name span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:600}
+.links{display:flex;gap:22px;margin-left:auto}
+.links a{text-decoration:none;color:var(--label-2);font-size:15px}
+.links a:hover{color:var(--label)}
+.gh{display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.1);text-decoration:none;font-size:14px;font-weight:600}
+.gh:hover{background:rgba(255,255,255,.14)}
+.gh svg{width:18px;height:18px}
+@media (max-width:820px){.links{display:none}.gh{margin-left:auto}}
+
+/* hero */
+.hero{text-align:center;padding:84px 0 40px}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:999px;font-size:14px;color:var(--label-2);
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1)}
+.pill b{background:var(--grad);color:#fff;padding:2px 9px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:.02em}
+.hero .logo{width:132px;height:132px;margin:30px auto 22px;border-radius:30px;box-shadow:0 30px 80px -20px rgba(255,80,60,.55),0 10px 30px rgba(0,0,0,.6)}
+h1{font-size:clamp(40px,7vw,84px);line-height:1.02;letter-spacing:-.035em;margin:0 auto;max-width:14ch;font-weight:800}
+h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lede{font-size:clamp(17px,2.2vw,21px);color:var(--label-2);max-width:40ch;margin:22px auto 0}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:34px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 26px;border-radius:999px;font-weight:650;font-size:17px;text-decoration:none;
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .25s,background .2s}
+.btn:hover{transform:translateY(-2px) scale(1.03)}
+.btn.primary{background:#fff;color:#111;box-shadow:0 12px 40px -10px rgba(255,255,255,.45)}
+.btn.ghost{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14)}
+.btn svg{width:20px;height:20px}
+.meta{margin-top:14px;font-size:14px;color:var(--label-3)}
+.stats{display:flex;justify-content:center;gap:clamp(18px,5vw,56px);flex-wrap:wrap;margin-top:42px}
+.stat{text-align:center}
+.stat b{display:block;font-size:clamp(24px,3.4vw,34px);letter-spacing:-.02em}
+.stat span{font-size:14px;color:var(--label-3)}
+
+/* the TV */
+.tv{max-width:1000px;margin:60px auto 0;position:relative}
+.tv .bezel{border-radius:22px;padding:12px;background:linear-gradient(180deg,#26262c,#0c0c10);
+  box-shadow:0 0 0 1px rgba(255,255,255,.08),0 50px 120px -30px rgba(255,70,90,.45),0 30px 60px rgba(0,0,0,.7)}
+.tv .bezel img{border-radius:12px;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.tv .stand{width:28%;height:14px;margin:0 auto;border-radius:0 0 14px 14px;background:linear-gradient(#1a1a20,#0b0b0e)}
+.tv .glow{position:absolute;inset:auto 10% -40px;height:80px;background:radial-gradient(closest-side,rgba(255,90,80,.35),transparent);filter:blur(20px);z-index:-1}
+
+/* sections */
+section.wrap{margin-top:130px;scroll-margin-top:80px}
+@media (max-width:600px){section.wrap{margin-top:90px}}
+.eyebrow{font-size:14px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font-size:clamp(32px,4.6vw,54px);letter-spacing:-.03em;line-height:1.06;margin:10px 0 14px;font-weight:800}
+.sub{color:var(--label-2);font-size:19px;max-width:54ch;margin:0}
+.center{text-align:center}.center .sub{margin:0 auto}
+
+/* features */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:46px}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--card-edge);border-radius:var(--r-l);padding:26px;
+  transition:transform .3s cubic-bezier(.34,1.56,.64,1),background .2s,border-color .2s}
+.card:hover{transform:translateY(-4px);background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.16)}
+.tile{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;font-size:24px;margin-bottom:18px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.25)}
+.card h3{margin:0 0 6px;font-size:20px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--label-2);font-size:16px}
+.t1{background:linear-gradient(#FF6B8A,#FF375F)}.t2{background:linear-gradient(#8E8E93,#48484A)}.t3{background:linear-gradient(#4FA3FF,#0A84FF)}
+.t4{background:linear-gradient(#8B6BFF,#5E5CE6)}.t5{background:linear-gradient(#FFC04D,#FF9F0A)}.t6{background:linear-gradient(#5BE07E,#30D158)}
+.t7{background:linear-gradient(#7FDBFF,#30B0C7)}.t8{background:linear-gradient(#5BC0EB,#2E7DD7)}.t9{background:linear-gradient(#D78BFF,#BF5AF2)}
+
+/* screenshots */
+.shots{margin-top:46px}
+.stage{border-radius:var(--r-l);overflow:hidden;border:1px solid var(--card-edge);background:#000;position:relative;aspect-ratio:16/9}
+.stage img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;opacity:0;transition:opacity .5s ease}
+.stage img.on{opacity:1}
+.thumbs{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}
+@media (max-width:600px){.thumbs{grid-template-columns:repeat(2,1fr)}}
+.thumb{all:unset;cursor:pointer;border-radius:var(--r-m);overflow:hidden;border:2px solid transparent;background:var(--card);
+  transition:transform .25s cubic-bezier(.34,1.56,.64,1),border-color .2s}
+.thumb img{aspect-ratio:16/9;object-fit:cover;width:100%;opacity:.6;transition:opacity .2s}
+.thumb span{display:block;padding:10px 12px;font-size:14px;font-weight:600;color:var(--label-2)}
+.thumb:hover img,.thumb[aria-selected=true] img{opacity:1}
+.thumb[aria-selected=true]{border-color:rgba(255,255,255,.85);transform:scale(1.03)}
+.thumb[aria-selected=true] span{color:var(--label)}
+.thumb:focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+
+/* install */
+.tabs{display:inline-flex;padding:4px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--card-edge);margin-top:34px}
+.tab{all:unset;cursor:pointer;padding:9px 18px;border-radius:999px;font-size:15px;font-weight:600;color:var(--label-2)}
+.tab[aria-selected=true]{background:#fff;color:#111}
+.tab:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.panel{display:none;margin-top:26px}.panel.on{display:block}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+@media (max-width:900px){.steps{grid-template-columns:1fr}}
+.step{background:var(--card);border:1px solid var(--card-edge);border-radius:var(--r-l);padding:26px;min-width:0}
+.num{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:16px;background:var(--grad);margin-bottom:14px}
+.step h3{margin:0 0 8px;font-size:19px}
+.step p{margin:0 0 12px;color:var(--label-2);font-size:16px}
+.step p:last-child{margin-bottom:0}
+kbd{font:600 13px/1 -apple-system,BlinkMacSystemFont,sans-serif;padding:3px 7px;border-radius:6px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.code{position:relative;background:#0B0B10;border:1px solid rgba(255,255,255,.1);border-radius:var(--r-s);margin:10px 0 0}
+.code pre{margin:0;padding:40px 14px 14px;white-space:pre-wrap;word-break:break-all;font-size:13.5px;line-height:1.6;color:#E8E8ED}
+.code .c{color:#7d7d88}
+.copy{all:unset;cursor:pointer;position:absolute;top:8px;right:8px;padding:6px 9px;border-radius:8px;font-size:12px;font-weight:600;
+  background:rgba(255,255,255,.08);color:var(--label-2)}
+.copy:hover{background:rgba(255,255,255,.16);color:var(--label)}
+.copy:focus-visible{outline:2px solid var(--blue)}
+.note{margin-top:18px;color:var(--label-3);font-size:15px}
+.note a{color:var(--label-2)}
+
+/* remote */
+.remote{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:40px}
+@media (max-width:900px){.remote{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.remote{grid-template-columns:1fr}}
+.key{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--card-edge);border-radius:var(--r-m);padding:18px}
+.key .k{flex:none;min-width:84px;text-align:center;padding:8px 10px;border-radius:12px;font-weight:700;font-size:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.14)}
+.key p{margin:0;color:var(--label-2);font-size:15.5px}
+
+/* how it works */
+.flow{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin:42px 0 0}
+.node{padding:14px 18px;border-radius:var(--r-m);background:var(--card);border:1px solid var(--card-edge);font-weight:600;font-size:15px;text-align:center}
+.node small{display:block;font-weight:400;color:var(--label-3);font-size:13px}
+.node.hot{background:linear-gradient(135deg,rgba(255,159,10,.25),rgba(255,55,95,.25),rgba(125,76,240,.25));border-color:rgba(255,255,255,.2)}
+.arrow{color:var(--label-3);font-size:22px}
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;margin-top:30px}
+@media (max-width:800px){.cols{grid-template-columns:1fr}}
+.cols .card p{font-size:16px}
+
+/* faq */
+.faq{max-width:820px;margin:40px auto 0}
+details{border-bottom:1px solid rgba(255,255,255,.1);padding:4px 0}
+summary{cursor:pointer;list-style:none;padding:18px 40px 18px 0;font-size:19px;font-weight:650;position:relative}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";position:absolute;right:6px;top:12px;font-size:26px;font-weight:300;color:var(--label-3);transition:transform .3s}
+details[open] summary::after{transform:rotate(45deg)}
+details p,details table{color:var(--label-2);margin:0 0 18px;font-size:16px}
+details table{border-collapse:collapse;width:100%}
+details td{padding:8px 10px 8px 0;vertical-align:top;border-top:1px solid rgba(255,255,255,.06)}
+details td:first-child{color:var(--label);font-weight:600;white-space:nowrap;padding-right:18px}
+@media (max-width:600px){details td:first-child{white-space:normal}}
+
+/* closing */
+.final{margin:120px 0 0;padding:64px 28px;border-radius:36px;text-align:center;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(255,159,10,.22),rgba(255,55,95,.22) 50%,rgba(125,76,240,.28));border:1px solid rgba(255,255,255,.14)}
+.final img{width:96px;height:96px;margin:0 auto 18px;border-radius:22px}
+.final h2{margin-top:0}
+footer{padding:64px 0 48px;color:var(--label-3);font-size:14px}
+footer .row{display:flex;gap:18px;flex-wrap:wrap;justify-content:space-between;align-items:center}
+footer a{color:var(--label-2);text-decoration:none}
+footer a:hover{color:var(--label)}
+footer .legal{margin-top:22px;font-size:12.5px;line-height:1.6;max-width:90ch}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}.btn,.card,.thumb{transition:none}}
+</style>
+</head>
+<body>
+<div class="aurora" aria-hidden="true"><i></i><i></i><i></i></div>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="logo.png" alt=""><b class="name">AppleFire<span>OS</span></b></a>
+    <div class="links">
+      <a href="#features">Features</a>
+      <a href="#screenshots">Screenshots</a>
+      <a href="#install">Install</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <a class="gh" href="https://github.com/pri-te-sh/AppleFireOS">
+      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+      <span>GitHub</span><span id="stars" hidden></span>
+    </a>
+  </div>
+</nav>
+
+<main id="top">
+  <header class="hero wrap">
+    <span class="pill"><b id="version">v1.0.2</b> Free and open source for Amazon Fire TV</span>
+    <img class="logo" src="logo.png" alt="AppleFireOS logo" width="132" height="132">
+    <h1>Your Fire TV, <em>reimagined.</em></h1>
+    <p class="lede">A tvOS-style home screen for Amazon Fire TV. A Top Shelf, Control Center, glass panels and spring animations, with no ads, no sponsored rows and no autoplaying trailers.</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/pri-te-sh/AppleFireOS/releases/latest/download/AppleFireOS.apk">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m0 0l-5-5m5 5l5-5M4 19h16"/></svg>
+        Download APK
+      </a>
+      <a class="btn ghost" href="#install">How to install</a>
+    </div>
+    <p class="meta"><span id="dl">Free</span> · MIT licence · Fire OS 6 and later</p>
+    <div class="stats">
+      <div class="stat"><b>~275 KB</b><span>APK size</span></div>
+      <div class="stat"><b>~150 MB</b><span>memory in use</span></div>
+      <div class="stat"><b>60 fps</b><span>on a Fire TV Stick 4K Max</span></div>
+      <div class="stat"><b>0</b><span>ads or trackers</span></div>
+    </div>
+    <div class="tv reveal">
+      <div class="bezel"><img src="hero.jpg" alt="The AppleFireOS home screen: Coco fills the Top Shelf above a row of apps" width="1600" height="900"></div>
+      <div class="stand"></div>
+      <div class="glow"></div>
+    </div>
+  </header>
+
+  <section id="features" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Features</div>
+      <h2>Everything tvOS got right.<br>On the TV you already own.</h2>
+      <p class="sub">Every screen is native Android, built from one design language, and tuned to stay smooth on a streaming stick.</p>
+    </div>
+    <div class="grid">
+      <article class="card reveal"><div class="tile t1">🎬</div><h3>Top Shelf</h3><p>Move onto an app and the screen fills with its artwork: what you were watching on Netflix, or what's popular on Prime Video, Disney+ and others. Press Select to play.</p></article>
+      <article class="card reveal"><div class="tile t2">🎛️</div><h3>Control Center</h3><p>Power, sleep timer, Bluetooth, the screensaver, what's playing, and your VPN with the country you appear from.</p></article>
+      <article class="card reveal"><div class="tile t3">🧭</div><h3>Sidebar &amp; profiles</h3><p>The tvOS sidebar for Home, Find, Insights and Settings, and a profile switcher that grows from your avatar.</p></article>
+      <article class="card reveal"><div class="tile t4">📊</div><h3>TV Insights</h3><p>Screen time by app and hour, your viewing habits over the week, live memory use, and one press to close what's slowing the TV down.</p></article>
+      <article class="card reveal"><div class="tile t5">🗂️</div><h3>Your layout</h3><p>Rearrange apps, group them into folders, hide what you never use, or let Smart order put what you usually watch at this time of day first.</p></article>
+      <article class="card reveal"><div class="tile t6">🛡️</div><h3>VPN status</h3><p>A shield beside the clock with the flag of the country your VPN connects through, and an alert if it drops while you're watching.</p></article>
+      <article class="card reveal"><div class="tile t7">🌤️</div><h3>Weather &amp; mood</h3><p>The temperature next to the time, from Open-Meteo with no account. Colours warm up in the evening and dim late at night.</p></article>
+      <article class="card reveal"><div class="tile t8">🌍</div><h3>Aerial screensaver</h3><p>Apple's aerial flyovers of cities, coastlines and the Earth from space, full screen.</p></article>
+      <article class="card reveal"><div class="tile t9">🪶</div><h3>Light and fast</h3><p>No WebView, no frameworks, no Gradle. About 150 MB of memory and 60 fps, from a 275 KB APK.</p></article>
+    </div>
+  </section>
+
+  <section id="screenshots" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Screenshots</div>
+      <h2>See it on a real Fire TV.</h2>
+      <p class="sub">Captured on a Fire TV Stick 4K Max.</p>
+    </div>
+    <div class="shots reveal">
+      <div class="stage" id="stage">
+        <img class="on" src="screenshots/home.jpg" alt="Home screen with Django Unchained in the Top Shelf" loading="lazy">
+        <img src="screenshots/control-center.jpg" alt="Control Center over the home screen" loading="lazy">
+        <img src="screenshots/insights.jpg" alt="TV Insights showing memory use by app" loading="lazy">
+        <img src="screenshots/settings.jpg" alt="Settings page" loading="lazy">
+      </div>
+      <div class="thumbs" role="tablist" aria-label="Screenshots">
+        <button class="thumb" role="tab" aria-selected="true"><img src="screenshots/home.jpg" alt=""><span>Home &amp; Top Shelf</span></button>
+        <button class="thumb" role="tab" aria-selected="false"><img src="screenshots/control-center.jpg" alt=""><span>Control Center</span></button>
+        <button class="thumb" role="tab" aria-selected="false"><img src="screenshots/insights.jpg" alt=""><span>TV Insights</span></button>
+        <button class="thumb" role="tab" aria-selected="false"><img src="screenshots/settings.jpg" alt=""><span>Settings</span></button>
+      </div>
+    </div>
+  </section>
+
+  <section id="install" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Install</div>
+      <h2>Up and running in three minutes.</h2>
+      <p class="sub">Fire OS doesn't let you change the home screen from the TV itself, so a computer switches it on, once.</p>
+      <div class="tabs" role="tablist" aria-label="Install method">
+        <button class="tab" role="tab" aria-selected="true" data-panel="p-computer">With a computer</button>
+        <button class="tab" role="tab" aria-selected="false" data-panel="p-downloader">No computer</button>
+      </div>
+    </div>
+
+    <div class="panel on" id="p-computer">
+      <div class="steps">
+        <div class="step reveal">
+          <div class="num">1</div>
+          <h3>Turn on ADB debugging</h3>
+          <p>On the TV: <b>Settings › My Fire TV › Developer Options › ADB Debugging</b>.</p>
+          <p>No Developer Options? Open <b>Settings › My Fire TV › About</b> and press Select on the device name seven times.</p>
+          <p>Note the TV's IP address from <b>About › Network</b>.</p>
+        </div>
+        <div class="step reveal">
+          <div class="num">2</div>
+          <h3>Get adb on your computer</h3>
+          <p>One command, on a computer on the same network:</p>
+          <div class="code"><pre><span class="c"># macOS</span>
+brew install android-platform-tools
+<span class="c"># Debian / Ubuntu</span>
+sudo apt install adb</pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div class="step reveal">
+          <div class="num">3</div>
+          <h3>Run setup</h3>
+          <p>With your TV's IP address. Choose <b>Allow</b> when the TV asks.</p>
+          <div class="code"><pre>curl -fsSLO https://raw.githubusercontent.com/pri-te-sh/AppleFireOS/main/setup.sh
+bash setup.sh 192.168.1.20</pre><button class="copy" type="button">Copy</button></div>
+          <p style="margin-top:12px">Then press <kbd>Home</kbd> on the remote.</p>
+        </div>
+      </div>
+      <p class="note center">Want movie and show artwork from more services? Add a free <a href="https://www.themoviedb.org/settings/api">TMDB key</a>: <code>bash setup.sh 192.168.1.20 --tmdb YOUR_KEY</code>, or type it on the TV in Settings › Top Shelf.</p>
+    </div>
+
+    <div class="panel" id="p-downloader">
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <h3>Install Downloader</h3>
+          <p>Get <b>Downloader</b> from the Amazon Appstore, and allow it under <b>Settings › My Fire TV › Developer Options › Install unknown apps</b>.</p>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <h3>Enter the link</h3>
+          <p>In Downloader, type this address and install:</p>
+          <div class="code"><pre>https://github.com/pri-te-sh/AppleFireOS/releases/latest/download/AppleFireOS.apk</pre><button class="copy" type="button">Copy</button></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <h3>Open AppleFireOS</h3>
+          <p>It works as an app straight away. To make the remote's Home button open it, run <code>setup.sh</code> once from any computer or adb app; the Setup page in AppleFireOS shows what's left.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="remote" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">Using it</div>
+      <h2>Made for the remote.</h2>
+    </div>
+    <div class="remote">
+      <div class="key reveal"><span class="k">Home</span><p>Comes back to AppleFireOS from anywhere.</p></div>
+      <div class="key reveal"><span class="k">Up</span><p>From the top row, into the Top Shelf. Up again opens Control Center.</p></div>
+      <div class="key reveal"><span class="k">Left</span><p>From the first column, opens the sidebar: Home, Find, Insights, Settings.</p></div>
+      <div class="key reveal"><span class="k">Hold Select</span><p>Move an app, put it in a folder, hide it or uninstall it.</p></div>
+      <div class="key reveal"><span class="k">Menu ☰</span><p>The same options for the focused app.</p></div>
+      <div class="key reveal"><span class="k">Select</span><p>In the Top Shelf, plays or resumes the title shown.</p></div>
+    </div>
+  </section>
+
+  <section id="how" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">How it works</div>
+      <h2>Small, native, and honest about it.</h2>
+    </div>
+    <div class="flow reveal" aria-label="Pressing Home: Fire OS opens Amazon's home, the redirect service sends you to AppleFireOS">
+      <div class="node">Home button</div><span class="arrow">→</span>
+      <div class="node">Fire OS<small>opens Amazon's home</small></div><span class="arrow">→</span>
+      <div class="node">Home redirect<small>accessibility service</small></div><span class="arrow">→</span>
+      <div class="node hot">AppleFireOS</div>
+    </div>
+    <div class="cols">
+      <div class="card reveal"><h3>The Home button</h3><p>Fire OS always starts Amazon's home screen and ignores the default-launcher setting. A tiny accessibility service sees it open and returns you to AppleFireOS in the same moment.</p></div>
+      <div class="card reveal"><h3>The Top Shelf</h3><p>It reads the cards apps already publish for Fire TV's own home screen, like Netflix's continue watching, and adds artwork from TMDB when you give it a key.</p></div>
+      <div class="card reveal"><h3>One design language</h3><p>Every colour, size, corner and animation curve comes from one theme. A lint runs on every build and fails it if a screen styles itself.</p></div>
+      <div class="card reveal"><h3>No build system</h3><p>No Gradle and no dependencies: <code>build.sh</code> runs the Android SDK's own tools and builds the APK in seconds.</p></div>
+    </div>
+  </section>
+
+  <section id="faq" class="wrap">
+    <div class="center reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2>Questions, answered.</h2>
+    </div>
+    <div class="faq reveal">
+      <details>
+        <summary>How do I go back to Amazon's home screen?</summary>
+        <p>Run <code>bash setup.sh &lt;tv-ip&gt; --uninstall</code>, or uninstall AppleFireOS on the TV in Settings › Applications. The Home button goes back to Amazon's home straight away.</p>
+      </details>
+      <details>
+        <summary>Which Fire TV devices does it work on?</summary>
+        <p>It's developed and tested on a Fire TV Stick 4K Max (Fire OS 8). It needs Android 7.1 or later, so Fire OS 6 and newer, and is laid out for 1080p and 4K TVs. Tried it on another model? <a href="https://github.com/pri-te-sh/AppleFireOS/issues">Open an issue</a> to say how it went.</p>
+      </details>
+      <details>
+        <summary>What do the permissions do?</summary>
+        <table>
+          <tr><td>Accessibility service</td><td>Sends the Home button to AppleFireOS. It only watches for Amazon's home screen opening.</td></tr>
+          <tr><td>Notification access</td><td>Top Shelf cards from your apps, and your VPN app's status.</td></tr>
+          <tr><td>Usage access</td><td>Screen Time and Smart order.</td></tr>
+          <tr><td>DUMP</td><td>Memory use and which app owns the VPN.</td></tr>
+          <tr><td>Write secure settings</td><td>Insights' faster-animations switch.</td></tr>
+        </table>
+      </details>
+      <details>
+        <summary>Is anything sent anywhere?</summary>
+        <p>No analytics, no accounts, no tracking. AppleFireOS only contacts TMDB for artwork if you add a key, Open-Meteo for weather if you set a city, a public IP-to-country lookup for the VPN flag, and Apple's servers for the aerial videos. Your layout, screen time and settings stay on the TV.</p>
+      </details>
+      <details>
+        <summary>Can I make the TV itself lighter?</summary>
+        <p><code>tools/debloat.sh</code> turns off Amazon background services most people never use (telemetry, Shop, miniTV, Photos, Kids, some Alexa extras). Updates, the Appstore and Alexa voice are left alone, nothing is uninstalled, and <code>restore</code> turns it all back on.</p>
+      </details>
+      <details>
+        <summary>Will a Fire OS update break it?</summary>
+        <p>Updates sometimes switch accessibility services off. If Home opens Amazon's screen again, run <code>setup.sh</code> once more; your layout and settings are kept.</p>
+      </details>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="final reveal">
+      <img src="logo.png" alt="">
+      <h2>Give your Fire TV a new home.</h2>
+      <p class="sub" style="margin:0 auto">Free, open source and about 275 KB.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/pri-te-sh/AppleFireOS/releases/latest/download/AppleFireOS.apk">Download APK</a>
+        <a class="btn ghost" href="https://github.com/pri-te-sh/AppleFireOS">Star on GitHub</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <a class="brand" href="#top"><img src="logo.png" alt=""><b class="name">AppleFire<span>OS</span></b></a>
+      <div style="display:flex;gap:20px;flex-wrap:wrap">
+        <a href="https://github.com/pri-te-sh/AppleFireOS">Source</a>
+        <a href="https://github.com/pri-te-sh/AppleFireOS/releases">Releases</a>
+        <a href="https://github.com/pri-te-sh/AppleFireOS/issues">Issues</a>
+        <a href="https://github.com/pri-te-sh/AppleFireOS/blob/main/LICENSE">MIT licence</a>
+      </div>
+    </div>
+    <p class="legal">© 2026 Pritesh Bhavsar. Apple, Apple TV and tvOS are trademarks of Apple Inc. Amazon, Fire TV and Fire OS are trademarks of Amazon.com, Inc. Netflix and the other services named are trademarks of their owners. AppleFireOS is an independent project inspired by tvOS, and isn't affiliated with or endorsed by Apple or Amazon. Artwork and metadata come from TMDB; this product uses the TMDB API but is not endorsed or certified by TMDB.</p>
+  </div>
+</footer>
+
+<script>
+// Screenshot gallery.
+const shots = [...document.querySelectorAll('#stage img')];
+const thumbs = [...document.querySelectorAll('.thumb')];
+function show(i) {
+  shots.forEach((s, k) => s.classList.toggle('on', k === i));
+  thumbs.forEach((t, k) => t.setAttribute('aria-selected', k === i));
+}
+thumbs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+
+// Install tabs.
+const tabs = [...document.querySelectorAll('.tab')];
+tabs.forEach(t => t.addEventListener('click', () => {
+  tabs.forEach(o => o.setAttribute('aria-selected', o === t));
+  document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === t.dataset.panel));
+}));
+
+// Copy buttons: copy the commands without the comment lines.
+document.querySelectorAll('.copy').forEach(b => b.addEventListener('click', async () => {
+  const text = b.previousElementSibling.innerText.split('\n').filter(l => !l.trim().startsWith('#')).join('\n').trim();
+  try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; }
+  catch (e) { b.textContent = 'Select & copy'; }
+  setTimeout(() => (b.textContent = 'Copy'), 1600);
+}));
+
+// Fade sections in as they scroll into view.
+const io = 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => {
+  if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+}), { rootMargin: '0px 0px -8% 0px' }) : null;
+document.querySelectorAll('.reveal').forEach(el => io ? io.observe(el) : el.classList.add('in'));
+
+// Latest version, downloads and stars from GitHub; the page reads fine without them.
+const api = 'https://api.github.com/repos/pri-te-sh/AppleFireOS';
+fetch(api + '/releases').then(r => r.ok ? r.json() : []).then(rels => {
+  if (!rels.length) return;
+  document.getElementById('version').textContent = rels[0].tag_name;
+  const n = rels.reduce((s, r) => s + r.assets.reduce((a, x) => a + x.download_count, 0), 0);
+  if (n > 0) document.getElementById('dl').textContent = n.toLocaleString() + ' downloads';
+}).catch(() => {});
+fetch(api).then(r => r.ok ? r.json() : null).then(repo => {
+  if (repo && repo.stargazers_count > 0) {
+    const s = document.getElementById('stars');
+    s.textContent = '★ ' + repo.stargazers_count.toLocaleString();
+    s.hidden = false;
+  }
+}).catch(() => {});
+</script>
+</body>
+</html>
